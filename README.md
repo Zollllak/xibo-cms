@@ -281,3 +281,5 @@ npm run build
 Os testes PHP isolados cobrem seleção, overrides, validação, tratamento real de NotifyStatus com dependências simuladas e ida/volta da migração em SQLite em memória. A suíte XMDS completa continua exigindo o ambiente de testes normal do projeto. A compilação e a reprodução em Windows com três monitores reais precisam ser verificadas antes da distribuição.
 
 O fluxo entre player, CMS e banco está documentado em [docs/architecture.md](docs/architecture.md).
+
+Para gerar uma imagem do fork sobre a mesma base upstream 4.5.6, com configuração preservada e procedimento de retorno, veja [deploy/monitor-selection/README.md](deploy/monitor-selection/README.md).

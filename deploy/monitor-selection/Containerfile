@@ -1,0 +1,18 @@
+# The runtime and dependencies match the deployed upstream 4.5.6 image.
+FROM ghcr.io/xibosignage/xibo-cms:release-4.5.6@sha256:fca8081e69d42b88218d14ab6c1c984887fb12bc97c67f290d5864c7f1b61127
+ARG FORK_COMMIT
+LABEL org.opencontainers.image.source="https://github.com/dougkusanagi/xibo-cms" \
+      org.opencontainers.image.revision="${FORK_COMMIT}" \
+      org.opencontainers.image.title="Xibo CMS 4.5.6 with monitor selection"
+COPY --chown=www-data:www-data runtime/ /var/www/cms/
+ENV GIT_COMMIT=${FORK_COMMIT}
+RUN test "$FORK_COMMIT" = "$(cat /var/www/cms/commit.sha)" && \
+    for file in \
+      lib/Controller/DisplayProfileConfigFields.php \
+      lib/Entity/Display.php \
+      lib/Factory/DisplayFactory.php \
+      lib/Factory/DisplayProfileFactory.php \
+      lib/Helper/MonitorInventory.php \
+      lib/Xmds/Soap4.php \
+      db/migrations/20261109150000_add_windows_monitor_inventory.php; \
+    do php -l "/var/www/cms/$file" || exit 1; done
