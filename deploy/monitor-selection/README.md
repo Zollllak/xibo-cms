@@ -30,6 +30,6 @@ A imagem base fixada precisa estar disponível. O `--pull=never` evita trocar a 
 
 ## Retornar à imagem anterior
 
-Restaure a imagem anterior no compose e recrie somente `cms-web`, mantendo os mesmos volumes e o mesmo `settings.php`. A coluna nova é nullable e não é usada pela imagem antiga; pode permanecer no banco. Não restaure o dump por padrão: isso apagaria alterações feitas depois do backup. Use o dump somente se houver dano aos dados e uma decisão explícita de restaurá-los.
+Restaure a imagem anterior no compose e recrie somente `cms-web`, mantendo os mesmos volumes e o mesmo `settings.php`. Monte também o arquivo `runtime/db/migrations/20261109150000_add_windows_monitor_inventory.php` da entrega em `/var/www/cms/db/migrations/20261109150000_add_windows_monitor_inventory.php`, somente para leitura. Sem esse arquivo, a imagem antiga detecta uma migração registrada mas ausente e bloqueia a aplicação por atualização pendente. Com o arquivo presente, a coluna nullable pode permanecer no banco sem ser usada pelo código antigo. Valide `phinx status` também para esse compose de retorno antes da troca. Não restaure o dump por padrão: isso apagaria alterações feitas depois do backup. Use o dump somente se houver dano aos dados e uma decisão explícita de restaurá-los.
 
 Este procedimento não cria release pública nem atualiza os players.
