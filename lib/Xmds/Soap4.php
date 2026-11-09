@@ -629,6 +629,18 @@ class Soap4 extends Soap
         $this->display->lanIpAddress = $sanitizedStatus->getString('lanIpAddress', ['default' => $this->display->lanIpAddress]);
         $commercialLicenceString = $sanitizedStatus->getString('licenceResult', ['default' => null]);
 
+        if ($this->display->clientType === 'windows' && $sanitizedStatus->hasParam('monitors')) {
+            try {
+                $this->display->monitorInventory = \Xibo\Helper\MonitorInventory::fromReport(
+                    $sanitizedStatus->getParam('monitors'),
+                    gmdate('c')
+                );
+            } catch (\InvalidArgumentException $exception) {
+                // Preserve the last valid report; a malformed inventory must not discard it.
+                $this->getLog()->warning('Ignoring invalid Windows monitor inventory');
+            }
+        }
+
         // Commercial Licence Check,  0 - Not licensed, 1 - licensed, 2 - trial licence, 3 - not applicable
         if (!empty($commercialLicenceString)) {
             if ($commercialLicenceString === 'Licensed fully'

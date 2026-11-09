@@ -399,6 +399,10 @@ class Display implements \JsonSerializable, XmrTargetInterface
     #[OA\Property(description: 'The Device Name for the device hardware associated with this Display')]
     public $deviceName;
 
+    /** Last validated Windows monitor report, including its reception time. */
+    #[OA\Property(description: 'Last reported Windows monitor inventory', type: 'object', nullable: true)]
+    public $monitorInventory = null;
+
     /**
      * @var string
      */
@@ -1243,6 +1247,7 @@ class Display implements \JsonSerializable, XmrTargetInterface
                     xmrPubKey = :xmrPubKey,
                     `lastCommandSuccess` = :lastCommandSuccess,
                     `deviceName` = :deviceName,
+                    `monitorInventory` = :monitorInventory,
                     `timeZone` = :timeZone,
                     `overrideConfig` = :overrideConfig,
                     `newCmsAddress` = :newCmsAddress,
@@ -1300,6 +1305,7 @@ class Display implements \JsonSerializable, XmrTargetInterface
             'xmrPubKey' => ($this->xmrPubKey === null) ? '' : $this->xmrPubKey,
             'lastCommandSuccess' => $this->lastCommandSuccess,
             'deviceName' => $this->deviceName,
+            'monitorInventory' => $this->monitorInventory === null ? null : json_encode($this->monitorInventory),
             'timeZone' => $this->timeZone,
             'overrideConfig' => ($this->overrideConfig == '') ? null : json_encode($this->overrideConfig),
             'newCmsAddress' => $this->newCmsAddress,

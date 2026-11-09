@@ -343,7 +343,8 @@ class DisplayFactory extends BaseFactory
                   `display`.xmrChannel,
                   `display`.xmrPubKey,
                   `display`.lastCommandSuccess, 
-                  `display`.deviceName, 
+                  `display`.deviceName,
+                  `display`.monitorInventory,
                   `display`.timeZone,
                   `display`.overrideConfig,
                   `display`.newCmsAddress,
@@ -766,6 +767,10 @@ class DisplayFactory extends BaseFactory
                 ],
                 'stringProperties' => ['customId']
             ]);
+            $display->monitorInventory = empty($row['monitorInventory'])
+                ? null
+                : json_decode($row['monitorInventory'], true);
+            $display->setOriginalValue('monitorInventory', $display->monitorInventory);
             $display->overrideConfig = ($display->overrideConfig == '')
                 ? []
                 : json_decode($display->overrideConfig, true);

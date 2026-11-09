@@ -142,6 +142,8 @@ export interface FieldMeta {
   helpText?: string;
   inputType: FieldInputType;
   options?: Array<{ value: string; label: string }>;
+  /** Keep hardware labels readable when names and dimensions exceed one line. */
+  wrapLabels?: boolean;
   /** CMS setting key that must be truthy (default: enabled) for this field to be shown at all. */
   requiresSetting?: string;
   /** Another field's key that must currently be truthy for this field to be shown. */
@@ -688,7 +690,7 @@ function windowsMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
       label: t('Player monitor'),
       tab: 'location',
       helpText: t(
-        'Primary or secondary fills the monitor and ignores manual size and coordinates. If the secondary is disconnected, the primary is used. Requires a Player with monitor selection; restart it after it receives this setting.',
+        'These options follow the primary or secondary monitor. To choose a specific monitor, edit the Display settings. Restart the Player after it receives this setting.',
       ),
       inputType: 'dropdown',
       options: [

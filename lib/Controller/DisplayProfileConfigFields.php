@@ -914,9 +914,10 @@ trait DisplayProfileConfigFields
             }
             if ($monitorSelection !== null
                 && !in_array($monitorSelection, ['default', 'primary', 'secondary'], true)
+                && !\Xibo\Helper\MonitorInventory::isMonitorId($monitorSelection)
             ) {
                 throw new InvalidArgumentException(
-                    __('Choose the current default, primary monitor or secondary monitor.'),
+                    __('Choose a monitor reported by the Player or a default monitor option.'),
                     'monitorSelection'
                 );
             }

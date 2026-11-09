@@ -30121,3 +30121,27 @@ msgstr ""
 #: monitor-selection
 msgid "Choose the current default, primary monitor or secondary monitor."
 msgstr ""
+
+#: monitor-inventory
+msgid "These options follow the primary or secondary monitor. To choose a specific monitor, edit the Display settings. Restart the Player after it receives this setting."
+msgstr ""
+
+#: monitor-inventory
+msgid "Choose a monitor from the latest Player report. If it is disconnected, the primary is used until it returns. Restart the Player after it receives this setting."
+msgstr ""
+
+#: monitor-inventory
+msgid "No monitors reported yet. Connect a Player with monitor selection and wait for its next report. Your saved choice is kept."
+msgstr ""
+
+#: monitor-inventory
+msgid "Selected monitor (not in the latest report)"
+msgstr ""
+
+#: monitor-inventory
+msgid "Last report: {{time}}"
+msgstr ""
+
+#: monitor-inventory
+msgid "Choose a monitor reported by the Player or a default monitor option."
+msgstr ""

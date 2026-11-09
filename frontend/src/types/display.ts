@@ -37,6 +37,22 @@ export interface DisplayPermissions {
   modifyPermissions?: number;
 }
 
+export interface WindowsMonitor {
+  id: string;
+  name: string;
+  deviceName: string;
+  isPrimary: boolean;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+}
+
+export interface MonitorInventory {
+  reportedAt: string;
+  monitors: WindowsMonitor[];
+}
+
 export interface Display {
   displayId: number;
   display: string;
@@ -98,6 +114,7 @@ export interface Display {
   xmrPubKey: string | null;
   lastCommandSuccess: number;
   deviceName: string | null;
+  monitorInventory?: MonitorInventory | null;
   timeZone: string | null;
   tags: Tag[];
   overrideConfig: Record<string, unknown>[];

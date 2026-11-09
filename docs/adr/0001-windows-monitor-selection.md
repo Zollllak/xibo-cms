@@ -1,6 +1,6 @@
 # 0001. Seleção de monitor pelo CMS
 
-- Status: Aceito
+- Status: Substituído por [0002](0002-windows-monitor-inventory.md)
 - Data: 2026-11-09
 
 ## Contexto

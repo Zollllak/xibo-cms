@@ -53,7 +53,9 @@ describe('Windows monitor selection', () => {
     );
     expect(screen.getByLabelText('Width')).toBeInTheDocument();
     expect(screen.getByLabelText('Left Coordinate')).toBeInTheDocument();
-    expect(screen.getByText(/restart it after it receives this setting/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Restart the Player after it receives this setting/),
+    ).toBeInTheDocument();
   });
 
   it('is offered only for Windows profiles and display overrides', () => {

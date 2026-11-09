@@ -52,6 +52,7 @@ interface BaseSelectDropdownProps {
   resolveLabel?: (value: string) => Promise<string>;
   options: SelectOption[];
   searchable?: boolean;
+  wrapLabels?: boolean;
   searchPlaceholder?: string;
   onSelect: (value: string) => void;
   helpText?: string;
@@ -94,6 +95,7 @@ export default function SelectDropdown({
   resolveLabel,
   options,
   searchable,
+  wrapLabels = false,
   searchPlaceholder,
   onSelect,
   onSearch,
@@ -269,7 +271,8 @@ export default function SelectDropdown({
         )}
         <span
           className={twMerge(
-            'py-2 px-3 flex-1 text-sm truncate min-w-0',
+            'py-2 px-3 flex-1 text-sm min-w-0',
+            wrapLabels ? 'whitespace-normal break-words text-left' : 'truncate',
             disabled
               ? 'text-gray-400'
               : isLoading
@@ -379,7 +382,10 @@ export default function SelectDropdown({
                         {option.label.slice(0, 1)}
                       </div>
                     )}
-                    <span className="truncate" title={option.label}>
+                    <span
+                      className={wrapLabels ? 'min-w-0 whitespace-normal break-words' : 'truncate'}
+                      title={option.label}
+                    >
                       {translateLabels ? t(option.label) : option.label}
                     </span>
                   </button>

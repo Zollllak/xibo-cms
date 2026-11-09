@@ -163,6 +163,7 @@ export function DynamicSettingField({
         helpText={meta.helpText}
         value={value ? String(value) : ''}
         options={meta.options ?? []}
+        wrapLabels={meta.wrapLabels}
         searchable
         onSelect={onChange}
       />

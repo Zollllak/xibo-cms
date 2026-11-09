@@ -89,6 +89,19 @@ class DisplayMonitorSelectionTest extends TestCase
         $this->assertSame([], $this->edit(['monitorSelection' => 'secondary'], [], $display));
     }
 
+    public function testSpecificMonitorPersistsAcrossDisplayOverrides(): void
+    {
+        $id = 'monitor:' . str_repeat('a', 64);
+        $display = $this->createMock(Display::class);
+        $display->method('getSetting')->willReturn('default');
+        $override = $this->edit(['monitorSelection' => $id], [], $display);
+        $this->assertSame([['name' => 'monitorSelection', 'value' => $id]], $override);
+        // The inventory may have changed; keeping the saved identity must remain valid.
+        $this->assertSame($override, $this->edit(['monitorSelection' => $id], $override, $display));
+        $this->assertSame([], $this->edit(['monitorSelection' => null], $override, $display));
+        $this->assertSame('default', $this->profile->getSetting('monitorSelection'));
+    }
+
     #[DataProvider('emptyValues')]
     public function testClearingAProfileRestoresItsDefault($value): void
     {
@@ -116,6 +129,7 @@ class DisplayMonitorSelectionTest extends TestCase
 
     public static function invalidValues(): array
     {
-        return [['monitor2'], ['SECONDARY'], ['2'], [2], [['secondary']]];
+        return [['monitor2'], ['SECONDARY'], ['2'], [2], [['secondary']],
+            ['monitor:'], ['monitor:' . str_repeat('a', 63)], ['monitor:' . str_repeat('g', 64)]];
     }
 }

@@ -258,20 +258,26 @@ re-producable bugs with this repository can be reported in
 the [Xibo parent repository](https://github.com/xibosignage/xibo/issues).
 
 
-## Seleção de monitor Windows neste fork
+## Seleção de qualquer monitor Windows neste fork
 
-Na aba de localização do perfil Windows, **Monitor do player** permite escolher o padrão atual, o monitor principal ou o secundário. Também é possível sobrescrever essa configuração em uma tela individual. O padrão mantém o tamanho e as coordenadas existentes. As escolhas de monitor ocupam a tela inteira; se o secundário estiver desconectado, o player usa o principal. Com vários secundários, o primeiro nome de dispositivo Windows é escolhido.
+Na edição de uma **Tela → Configurações**, sobrescreva **Monitor do player** e escolha um dos monitores informados pelo computador. A lista mostra nome, dispositivo Windows, resolução e indicação do principal. Ela usa o último relatório recebido, cuja data aparece na ajuda. Assim é possível escolher o terceiro, quarto ou outro monitor sem calcular coordenadas. Aplique a escolha e salve a tela.
 
-Este recurso exige o [player Windows deste fork](https://github.com/dougkusanagi/xibo-dotnetclient/tree/feature/monitor-selection). Players oficiais anteriores ignoram a configuração. Aguarde o player receber a alteração e reinicie-o. Não é necessário migrar o banco: a escolha usa o contrato existente de configurações e o XMDS. Para instalar este CMS, use os procedimentos normais de build do projeto, incluindo o build do frontend; substituir apenas os arquivos PHP não adiciona o controle ao dashboard.
+Perfis Windows compartilhados mantêm as opções padrão atual, principal e secundário. O padrão atual preserva tamanho e coordenadas manuais. A escolha de um monitor ocupa sua área inteira. Se ele estiver desconectado, sua identificação continua salva e o player usa temporariamente o principal. Um monitor ausente do último relatório é identificado na lista, sem apagar a seleção. Use o modo Estender do Windows para telas independentes.
 
-Testes locais do recurso (após instalar as dependências com os lockfiles existentes):
+O recurso exige o [player Windows deste fork](https://github.com/dougkusanagi/xibo-dotnetclient/tree/feature/monitor-selection). Aguarde o próximo relatório para receber a lista de monitores. Depois de editar a escolha, aguarde o player receber a configuração e reinicie-o. Players oficiais anteriores ignoram a configuração.
+
+**Instalação:** siga o processo normal de atualização do CMS, execute a migração `20261109150000_add_windows_monitor_inventory.php` com `vendor/bin/phinx migrate -c phinx.php` e compile o frontend. A migração adiciona `display.monitorInventory` (TEXT/JSON, nullable), preserva os registros existentes e permite rollback. Substituir só os arquivos PHP não atualiza o dashboard. O relatório passa pela autenticação XMDS e por validação de tamanho, identidades, nomes, tipos e limites; relatórios inválidos ou omitidos não apagam o último inventário válido.
+
+Testes locais do recurso (com as dependências dos lockfiles existentes):
 
 ```sh
-vendor/bin/phpunit --no-configuration --bootstrap tests/Unit/Bootstrap.php tests/Unit/DisplayMonitorSelectionTest.php
+vendor/bin/phpunit --no-configuration --bootstrap tests/Unit/Bootstrap.php tests/Unit
 cd frontend
-npm test -- --run src/pages/Displays/DisplayProfile/__tests__
+npm test -- --run --maxWorkers=1 --no-file-parallelism src/pages/Displays/DisplayProfile/__tests__ src/pages/Displays/Displays/__tests__/modals/edit
 npm run typecheck
 npm run build
 ```
 
-O teste PHP isolado valida padrão, persistência, overrides individuais, limpeza e rejeição de valores inválidos sem precisar do banco de um CMS. A suíte XMDS completa continua usando a configuração de testes normal do projeto.
+Os testes PHP isolados cobrem seleção, overrides, validação, tratamento real de NotifyStatus com dependências simuladas e ida/volta da migração em SQLite em memória. A suíte XMDS completa continua exigindo o ambiente de testes normal do projeto. A compilação e a reprodução em Windows com três monitores reais precisam ser verificadas antes da distribuição.
+
+O fluxo entre player, CMS e banco está documentado em [docs/architecture.md](docs/architecture.md).

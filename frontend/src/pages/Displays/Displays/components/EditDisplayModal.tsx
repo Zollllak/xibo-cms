@@ -60,6 +60,7 @@ import {
 import { PICTURE_PROPERTY_DEFS } from '@/pages/Displays/DisplayProfile/components/fields/LgSsspFields';
 import type { FieldMeta } from '@/pages/Displays/DisplayProfile/components/fields/fieldMetadata';
 import { getFieldMetaForType } from '@/pages/Displays/DisplayProfile/components/fields/fieldMetadata';
+import { withReportedMonitors } from '@/pages/Displays/DisplayProfile/components/fields/monitorSelection';
 import { getEditDisplaySchema } from '@/schema/display';
 import { fetchDaypart, fetchDaypartById } from '@/services/daypartApi';
 import { fetchDisplayProfileById, fetchDisplayProfile } from '@/services/displayProfileApi';
@@ -457,7 +458,7 @@ function OverrideCell({
         ref={refs.setReference}
         {...getReferenceProps()}
         onClick={handleOpen}
-        className={overrideVal !== undefined ? 'text-amber-600 hover:text-amber-700' : undefined}
+        className={`${overrideVal !== undefined ? 'text-amber-600 hover:text-amber-700' : ''} ${meta.wrapLabels ? 'min-w-0 whitespace-normal break-words text-left' : ''}`}
       >
         {displayText ?? t('Override')}
       </Button>
@@ -1239,6 +1240,16 @@ export default function EditDisplayModal({
     }
     return profileFlat[name] !== undefined ? profileFlat[name] : (profileDefaults[name] ?? null);
   };
+
+  if (resolvedProfileType === 'windows' && fieldMeta.monitorSelection) {
+    fieldMeta.monitorSelection = withReportedMonitors(
+      fieldMeta.monitorSelection,
+      data?.monitorInventory,
+      overrides.monitorSelection ?? String(getProfileValue('monitorSelection') ?? ''),
+      t,
+      data?.monitorInventory ? formatDateTime(data.monitorInventory.reportedAt) : '',
+    );
+  }
 
   const commitOverride = (name: string, value: string) => {
     if (value.trim() === '') {

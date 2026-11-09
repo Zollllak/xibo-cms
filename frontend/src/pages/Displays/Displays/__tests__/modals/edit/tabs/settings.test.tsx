@@ -19,13 +19,16 @@
  * along with Xibo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type React from 'react';
 import { vi, beforeEach, describe, test, expect } from 'vitest';
 
+import { mockDisplay } from '../../../fixtures/display';
 import { renderEditModal } from '../helpers/renderEditModal';
 
+import { fetchDisplayProfileById } from '@/services/displayProfileApi';
+import { updateDisplay } from '@/services/displaysApi';
 import { testQueryClient } from '@/setupTests';
 
 // =============================================================================
@@ -96,5 +99,51 @@ describe('Display - edit form: Settings tab', () => {
     await user.click(screen.getByRole('tab', { name: 'Settings' }));
 
     expect(screen.getByRole('combobox', { name: /settings profile/i })).not.toBeDisabled();
+  });
+
+  test('selects the third reported monitor and sends its persistent ID when saving', async () => {
+    const user = userEvent.setup();
+    const monitors = [1, 2, 3].map((number) => ({
+      id: `monitor:${String(number).repeat(64)}`,
+      name: `Monitor ${number}`,
+      deviceName: `DISPLAY${number}`,
+      isPrimary: number === 1,
+      width: 1920,
+      height: 1080,
+      left: (number - 1) * 1920,
+      top: 0,
+    }));
+    vi.mocked(fetchDisplayProfileById).mockResolvedValue({
+      displayProfileId: 1,
+      name: 'Windows',
+      type: 'windows',
+      isDefault: 1,
+      config: [],
+      configDefault: [{ name: 'monitorSelection', default: 'default', type: 'string' }],
+    } as Awaited<ReturnType<typeof fetchDisplayProfileById>>);
+    vi.mocked(updateDisplay).mockResolvedValue({ ...mockDisplay, displayId: 1 });
+    await renderEditModal({
+      data: {
+        ...mockDisplay,
+        clientType: 'windows',
+        displayProfileType: 'windows',
+        displayProfileId: 1,
+        monitorInventory: { reportedAt: '2026-11-09T18:00:00Z', monitors },
+      },
+    });
+    await user.click(screen.getByRole('tab', { name: 'Settings' }));
+    const row = await screen.findByRole('row', { name: /Player monitor/ });
+    await user.click(within(row).getByRole('button', { name: 'Override' }));
+    await user.click(screen.getByRole('combobox', { name: 'Player monitor' }));
+    await user.click(screen.getByRole('option', { name: /Monitor 3 — DISPLAY3/ }));
+    await user.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(row).toHaveTextContent('Monitor 3 — DISPLAY3');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    expect(updateDisplay).toHaveBeenCalledWith(
+      1,
+      expect.objectContaining({
+        overrideValues: expect.objectContaining({ monitorSelection: monitors[2]!.id }),
+      }),
+    );
   });
 });
