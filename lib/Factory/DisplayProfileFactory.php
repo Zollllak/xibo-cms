@@ -158,6 +158,7 @@ class DisplayProfileFactory extends BaseFactory
                     'type' => 'string',
                 ],
                 ['name' => 'powerpointEnabled', 'default' => 0, 'type' => 'checkbox'],
+                ['name' => 'monitorSelection', 'default' => 'default', 'type' => 'string'],
                 ['name' => 'sizeX', 'default' => 0, 'type' => 'double'],
                 ['name' => 'sizeY', 'default' => 0, 'type' => 'double'],
                 ['name' => 'offsetX', 'default' => 0, 'type' => 'double'],

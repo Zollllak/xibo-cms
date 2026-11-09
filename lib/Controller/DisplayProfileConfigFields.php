@@ -907,6 +907,30 @@ trait DisplayProfileConfigFields
         array &$changedSettings,
         bool $ownConfig
     ): void {
+        if ($sanitizedParams->hasParam('monitorSelection')) {
+            $monitorSelection = $sanitizedParams->getString('monitorSelection', ['default' => null]);
+            if ($monitorSelection === '') {
+                $monitorSelection = null;
+            }
+            if ($monitorSelection !== null
+                && !in_array($monitorSelection, ['default', 'primary', 'secondary'], true)
+            ) {
+                throw new InvalidArgumentException(
+                    __('Choose the current default, primary monitor or secondary monitor.'),
+                    'monitorSelection'
+                );
+            }
+            $this->handleChangedSettings(
+                'monitorSelection',
+                ($ownConfig)
+                    ? $displayProfile->getSetting('monitorSelection')
+                    : $display->getSetting('monitorSelection'),
+                $monitorSelection,
+                $changedSettings
+            );
+            $displayProfile->setSetting('monitorSelection', $monitorSelection, $ownConfig, $config);
+        }
+
         if ($sanitizedParams->hasParam('collectInterval')) {
             $this->handleChangedSettings(
                 'collectInterval',

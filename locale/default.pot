@@ -30097,3 +30097,27 @@ msgstr ""
 #: web/settings.php:11
 msgid "Please press the back button in your browser."
 msgstr ""
+
+#: monitor-selection
+msgid "Player monitor"
+msgstr ""
+
+#: monitor-selection
+msgid "Current default (window size and coordinates)"
+msgstr ""
+
+#: monitor-selection
+msgid "Primary monitor"
+msgstr ""
+
+#: monitor-selection
+msgid "Secondary monitor"
+msgstr ""
+
+#: monitor-selection
+msgid "Primary or secondary fills the monitor and ignores manual size and coordinates. If the secondary is disconnected, the primary is used. Requires a Player with monitor selection; restart it after it receives this setting."
+msgstr ""
+
+#: monitor-selection
+msgid "Choose the current default, primary monitor or secondary monitor."
+msgstr ""

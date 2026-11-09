@@ -256,3 +256,22 @@ source either way!
 Support requests can be reported on the [Xibo Community Forum](https://community.xibo.org.uk/c/dev). Verified, 
 re-producable bugs with this repository can be reported in 
 the [Xibo parent repository](https://github.com/xibosignage/xibo/issues).
+
+
+## Seleção de monitor Windows neste fork
+
+Na aba de localização do perfil Windows, **Monitor do player** permite escolher o padrão atual, o monitor principal ou o secundário. Também é possível sobrescrever essa configuração em uma tela individual. O padrão mantém o tamanho e as coordenadas existentes. As escolhas de monitor ocupam a tela inteira; se o secundário estiver desconectado, o player usa o principal. Com vários secundários, o primeiro nome de dispositivo Windows é escolhido.
+
+Este recurso exige o [player Windows deste fork](https://github.com/dougkusanagi/xibo-dotnetclient/tree/feature/monitor-selection). Players oficiais anteriores ignoram a configuração. Aguarde o player receber a alteração e reinicie-o. Não é necessário migrar o banco: a escolha usa o contrato existente de configurações e o XMDS. Para instalar este CMS, use os procedimentos normais de build do projeto, incluindo o build do frontend; substituir apenas os arquivos PHP não adiciona o controle ao dashboard.
+
+Testes locais do recurso (após instalar as dependências com os lockfiles existentes):
+
+```sh
+vendor/bin/phpunit --no-configuration --bootstrap tests/Unit/Bootstrap.php tests/Unit/DisplayMonitorSelectionTest.php
+cd frontend
+npm test -- --run src/pages/Displays/DisplayProfile/__tests__
+npm run typecheck
+npm run build
+```
+
+O teste PHP isolado valida padrão, persistência, overrides individuais, limpeza e rejeição de valores inválidos sem precisar do banco de um CMS. A suíte XMDS completa continua usando a configuração de testes normal do projeto.

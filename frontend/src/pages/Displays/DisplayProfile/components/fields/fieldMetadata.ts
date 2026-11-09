@@ -684,6 +684,19 @@ function windowsMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
       ),
       inputType: 'checkbox',
     },
+    monitorSelection: {
+      label: t('Player monitor'),
+      tab: 'location',
+      helpText: t(
+        'Primary or secondary fills the monitor and ignores manual size and coordinates. If the secondary is disconnected, the primary is used. Requires a Player with monitor selection; restart it after it receives this setting.',
+      ),
+      inputType: 'dropdown',
+      options: [
+        { value: 'default', label: t('Current default (window size and coordinates)') },
+        { value: 'primary', label: t('Primary monitor') },
+        { value: 'secondary', label: t('Secondary monitor') },
+      ],
+    },
     sizeX: {
       label: t('Width'),
       tab: 'location',
