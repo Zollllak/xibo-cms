@@ -252,6 +252,7 @@ class DisplayProfileFactory extends BaseFactory
                 ['name' => 'isTouchEnabled', 'default' => 0, 'type' => 'checkbox']
             ],
             'linux' => [
+                ['name' => 'monitorSelection', 'default' => 'default', 'type' => 'string'],
                 ['name' => 'collectInterval', 'default' => 300],
                 ['name' => 'downloadStartWindow', 'default' => '00:00'],
                 ['name' => 'downloadEndWindow', 'default' => '00:00'],
