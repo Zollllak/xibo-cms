@@ -675,17 +675,8 @@ function androidMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
   };
 }
 
-function windowsMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
+function monitorSelectionMeta(t: TFunction): FieldMetaMap {
   return {
-    powerpointEnabled: {
-      label: t('Enable PowerPoint?'),
-      // Legacy has this as the last field on General, not Advanced.
-      tab: 'general',
-      helpText: t(
-        'Should Microsoft PowerPoint be Enabled? The Player will need PowerPoint installed to Display PowerPoint files.',
-      ),
-      inputType: 'checkbox',
-    },
     monitorSelection: {
       label: t('Player monitor'),
       tab: 'location',
@@ -699,6 +690,21 @@ function windowsMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
         { value: 'secondary', label: t('Secondary monitor') },
       ],
     },
+  };
+}
+
+function windowsMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
+  return {
+    powerpointEnabled: {
+      label: t('Enable PowerPoint?'),
+      // Legacy has this as the last field on General, not Advanced.
+      tab: 'general',
+      helpText: t(
+        'Should Microsoft PowerPoint be Enabled? The Player will need PowerPoint installed to Display PowerPoint files.',
+      ),
+      inputType: 'checkbox',
+    },
+    ...monitorSelectionMeta(t),
     sizeX: {
       label: t('Width'),
       tab: 'location',
@@ -1123,6 +1129,7 @@ function linuxMeta(t: TFunction, common: FieldMetaMap): FieldMetaMap {
     statsEnabled: common.statsEnabled!,
     aggregationLevel: common.aggregationLevel!,
     // ---- Location tab ----
+    ...monitorSelectionMeta(t),
     sizeX: {
       label: t('Width'),
       tab: 'location',

@@ -1241,7 +1241,10 @@ export default function EditDisplayModal({
     return profileFlat[name] !== undefined ? profileFlat[name] : (profileDefaults[name] ?? null);
   };
 
-  if (resolvedProfileType === 'windows' && fieldMeta.monitorSelection) {
+  if (
+    (resolvedProfileType === 'windows' || resolvedProfileType === 'linux') &&
+    fieldMeta.monitorSelection
+  ) {
     fieldMeta.monitorSelection = withReportedMonitors(
       fieldMeta.monitorSelection,
       data?.monitorInventory,
