@@ -101,49 +101,52 @@ describe('Display - edit form: Settings tab', () => {
     expect(screen.getByRole('combobox', { name: /settings profile/i })).not.toBeDisabled();
   });
 
-  test('selects the third reported monitor and sends its persistent ID when saving', async () => {
-    const user = userEvent.setup();
-    const monitors = [1, 2, 3].map((number) => ({
-      id: `monitor:${String(number).repeat(64)}`,
-      name: `Monitor ${number}`,
-      deviceName: `DISPLAY${number}`,
-      isPrimary: number === 1,
-      width: 1920,
-      height: 1080,
-      left: (number - 1) * 1920,
-      top: 0,
-    }));
-    vi.mocked(fetchDisplayProfileById).mockResolvedValue({
-      displayProfileId: 1,
-      name: 'Windows',
-      type: 'windows',
-      isDefault: 1,
-      config: [],
-      configDefault: [{ name: 'monitorSelection', default: 'default', type: 'string' }],
-    } as Awaited<ReturnType<typeof fetchDisplayProfileById>>);
-    vi.mocked(updateDisplay).mockResolvedValue({ ...mockDisplay, displayId: 1 });
-    await renderEditModal({
-      data: {
-        ...mockDisplay,
-        clientType: 'windows',
-        displayProfileType: 'windows',
+  test.each(['windows', 'linux'] as const)(
+    '%s selects the third reported monitor and saves its persistent ID',
+    async (type) => {
+      const user = userEvent.setup();
+      const monitors = [1, 2, 3].map((number) => ({
+        id: `monitor:${String(number).repeat(64)}`,
+        name: `Monitor ${number}`,
+        deviceName: `DISPLAY${number}`,
+        isPrimary: number === 1,
+        width: 1920,
+        height: 1080,
+        left: (number - 1) * 1920,
+        top: 0,
+      }));
+      vi.mocked(fetchDisplayProfileById).mockResolvedValue({
         displayProfileId: 1,
-        monitorInventory: { reportedAt: '2026-11-09T18:00:00Z', monitors },
-      },
-    });
-    await user.click(screen.getByRole('tab', { name: 'Settings' }));
-    const row = await screen.findByRole('row', { name: /Player monitor/ });
-    await user.click(within(row).getByRole('button', { name: 'Override' }));
-    await user.click(screen.getByRole('combobox', { name: 'Player monitor' }));
-    await user.click(screen.getByRole('option', { name: /Monitor 3 — DISPLAY3/ }));
-    await user.click(screen.getByRole('button', { name: 'Apply' }));
-    expect(row).toHaveTextContent('Monitor 3 — DISPLAY3');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
-    expect(updateDisplay).toHaveBeenCalledWith(
-      1,
-      expect.objectContaining({
-        overrideValues: expect.objectContaining({ monitorSelection: monitors[2]!.id }),
-      }),
-    );
-  });
+        name: 'Windows',
+        type,
+        isDefault: 1,
+        config: [],
+        configDefault: [{ name: 'monitorSelection', default: 'default', type: 'string' }],
+      } as Awaited<ReturnType<typeof fetchDisplayProfileById>>);
+      vi.mocked(updateDisplay).mockResolvedValue({ ...mockDisplay, displayId: 1 });
+      await renderEditModal({
+        data: {
+          ...mockDisplay,
+          clientType: type,
+          displayProfileType: type,
+          displayProfileId: 1,
+          monitorInventory: { reportedAt: '2026-11-09T18:00:00Z', monitors },
+        },
+      });
+      await user.click(screen.getByRole('tab', { name: 'Settings' }));
+      const row = await screen.findByRole('row', { name: /Player monitor/ });
+      await user.click(within(row).getByRole('button', { name: 'Override' }));
+      await user.click(screen.getByRole('combobox', { name: 'Player monitor' }));
+      await user.click(screen.getByRole('option', { name: /Monitor 3 — DISPLAY3/ }));
+      await user.click(screen.getByRole('button', { name: 'Apply' }));
+      expect(row).toHaveTextContent('Monitor 3 — DISPLAY3');
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+      expect(updateDisplay).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({
+          overrideValues: expect.objectContaining({ monitorSelection: monitors[2]!.id }),
+        }),
+      );
+    },
+  );
 });

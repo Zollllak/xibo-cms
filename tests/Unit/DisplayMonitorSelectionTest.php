@@ -15,6 +15,11 @@ use Xibo\Support\Sanitizer\RespectSanitizer;
 
 class DisplayMonitorSelectionTest extends TestCase
 {
+    protected function playerType(): string
+    {
+        return 'windows';
+    }
+
     private DisplayProfile $profile;
     private object $controller;
 
@@ -26,7 +31,7 @@ class DisplayMonitorSelectionTest extends TestCase
         $factory = new DisplayProfileFactory($config, $commands);
         $this->profile = new DisplayProfile(null, $log, null, $config, $commands, $factory);
         $this->profile->config = [];
-        $this->profile->setClientType('windows');
+        $this->profile->setClientType($this->playerType());
         $this->profile->load(['loadCommands' => false]);
         $this->controller = new class ($log) {
             use DisplayProfileConfigFields;

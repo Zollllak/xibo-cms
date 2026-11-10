@@ -49,6 +49,12 @@ trait DisplayProfileConfigFields
 
         $changedSettings = [];
 
+        if (in_array($displayProfile->getClientType(), ['windows', 'linux'], true)) {
+            $this->applyMonitorSelectionFields(
+                $displayProfile, $sanitizedParams, $config, $display, $changedSettings, $ownConfig
+            );
+        }
+
         switch ($displayProfile->getClientType()) {
             case 'android':
                 $this->applyAndroidConfigFields(
@@ -899,7 +905,7 @@ trait DisplayProfileConfigFields
         }
     }
 
-    private function applyWindowsConfigFields(
+    private function applyMonitorSelectionFields(
         $displayProfile,
         SanitizerInterface $sanitizedParams,
         ?array &$config,
@@ -932,6 +938,16 @@ trait DisplayProfileConfigFields
             $displayProfile->setSetting('monitorSelection', $monitorSelection, $ownConfig, $config);
         }
 
+    }
+
+    private function applyWindowsConfigFields(
+        $displayProfile,
+        SanitizerInterface $sanitizedParams,
+        ?array &$config,
+        $display,
+        array &$changedSettings,
+        bool $ownConfig
+    ): void {
         if ($sanitizedParams->hasParam('collectInterval')) {
             $this->handleChangedSettings(
                 'collectInterval',

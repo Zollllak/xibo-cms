@@ -12,6 +12,11 @@ use Xibo\Xmds\Soap7;
 
 class NotifyMonitorInventoryTest extends TestCase
 {
+    protected function playerType(): string
+    {
+        return 'windows';
+    }
+
     private function soap(Display $display, bool $authorized = true): Soap7
     {
         $soap = $this->getMockBuilder(Soap7::class)->disableOriginalConstructor()->onlyMethods([
@@ -35,7 +40,7 @@ class NotifyMonitorInventoryTest extends TestCase
     private function display(): Display
     {
         $display = $this->createMock(Display::class);
-        $display->clientType = 'windows';
+        $display->clientType = $this->playerType();
         $display->monitorInventory = ['reportedAt' => 'previous', 'monitors' => []];
         $display->method('getChangedProperties')->willReturn(['monitorInventory']);
         return $display;
@@ -77,4 +82,13 @@ class NotifyMonitorInventoryTest extends TestCase
         $this->expectException(\SoapFault::class);
         $this->soap($display, false)->NotifyStatus('test-key', 'unknown-display', '{"monitors":[]}');
     }
+    public function testUnrelatedPlayerTypesDoNotOverwriteMonitorInventory(): void
+    {
+        $display = $this->display();
+        $display->clientType = 'android';
+        $previous = $display->monitorInventory;
+        $this->soap($display)->NotifyStatus('test-key', 'test-display', '{"monitors":[]}');
+        $this->assertSame($previous, $display->monitorInventory);
+    }
+
 }
