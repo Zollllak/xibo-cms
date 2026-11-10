@@ -46,6 +46,9 @@ export interface WindowsMonitor {
   height: number;
   left: number;
   top: number;
+  geometryUnits?: 'physical-pixels' | 'dip';
+  pixelWidth?: number;
+  pixelHeight?: number;
 }
 
 export interface MonitorInventory {

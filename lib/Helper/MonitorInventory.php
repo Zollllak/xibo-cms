@@ -49,6 +49,20 @@ class MonitorInventory
                     throw new \InvalidArgumentException('Invalid monitor bounds');
                 }
             }
+            $units = array_key_exists('geometryUnits', $monitor) ? $monitor['geometryUnits'] : 'physical-pixels';
+            if (!in_array($units, ['physical-pixels', 'dip'], true)) {
+                throw new \InvalidArgumentException('Invalid monitor geometry units');
+            }
+            // DIP rectangles cannot also describe the rendering surface on scaled displays.
+            if ($units === 'dip' || array_key_exists('pixelWidth', $monitor)
+                || array_key_exists('pixelHeight', $monitor)
+            ) {
+                foreach (['pixelWidth', 'pixelHeight'] as $key) {
+                    if (!is_int($monitor[$key] ?? null) || $monitor[$key] < 1 || $monitor[$key] > 65535) {
+                        throw new \InvalidArgumentException('Invalid monitor pixel dimensions');
+                    }
+                }
+            }
             if ($monitor['isPrimary'] && ++$primaryCount > 1) {
                 throw new \InvalidArgumentException('Multiple primary monitors');
             }
@@ -57,6 +71,7 @@ class MonitorInventory
             // Store only fields in the contract, never arbitrary player input.
             $result[] = array_intersect_key($monitor, array_flip([
                 'id', 'name', 'deviceName', 'isPrimary', 'width', 'height', 'left', 'top',
+                'geometryUnits', 'pixelWidth', 'pixelHeight',
             ]));
         }
         return ['reportedAt' => $reportedAt, 'monitors' => $result];

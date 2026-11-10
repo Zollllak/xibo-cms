@@ -99,4 +99,30 @@ describe('Windows and Linux monitor selection', () => {
       expect(meta.options?.some((option) => option.value === selected)).toBe(false);
     },
   );
+  it('labels Retina monitors with rendering pixels instead of DIP dimensions', () => {
+    const meta = getFieldMetaForType('linux', t).monitorSelection!;
+    const monitor = {
+      id: `monitor:${'e'.repeat(64)}`,
+      name: 'Retina',
+      deviceName: 'mac-test',
+      isPrimary: true,
+      width: 1470,
+      height: 956,
+      left: 0,
+      top: 0,
+      geometryUnits: 'dip' as const,
+      pixelWidth: 2940,
+      pixelHeight: 1912,
+    };
+    const enriched = withReportedMonitors(
+      meta,
+      { reportedAt: 'now', monitors: [monitor] },
+      monitor.id,
+      t,
+      '',
+    );
+    expect(enriched.options?.find((option) => option.value === monitor.id)?.label).toContain(
+      '2940 × 1912',
+    );
+  });
 });

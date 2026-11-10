@@ -16,7 +16,7 @@ export function withReportedMonitors(
   for (const monitor of inventory?.monitors ?? []) {
     options.push({
       value: monitor.id,
-      label: `${monitor.name} — ${monitor.deviceName} — ${monitor.width} × ${monitor.height}${monitor.isPrimary ? ` (${t('Primary monitor')})` : ''}`,
+      label: `${monitor.name} — ${monitor.deviceName} — ${monitor.pixelWidth ?? monitor.width} × ${monitor.pixelHeight ?? monitor.height}${monitor.isPrimary ? ` (${t('Primary monitor')})` : ''}`,
     });
   }
   // Preserve a selected device when it is disconnected or the report is unavailable.
