@@ -39,10 +39,11 @@ class NotifyMonitorInventoryTest extends TestCase
 
     private function display(): Display
     {
-        $display = $this->createMock(Display::class);
+        // Exercise the real EntityTrait detector: mocking it hid array-only updates.
+        $display = $this->getMockBuilder(Display::class)->disableOriginalConstructor()->onlyMethods(['save'])->getMock();
         $display->clientType = $this->playerType();
         $display->monitorInventory = ['reportedAt' => 'previous', 'monitors' => []];
-        $display->method('getChangedProperties')->willReturn(['monitorInventory']);
+        $display->setOriginalValue('monitorInventory', $display->monitorInventory);
         return $display;
     }
 
