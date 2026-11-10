@@ -730,9 +730,10 @@ class Soap4 extends Soap
             $this->display->longitude = $longitude;
         }
 
-        // Touch the display record
+        // Inventory is an array: include structured properties in change detection.
+        // Otherwise a monitor-only report can return success without being persisted.
         try {
-            if (count($this->display->getChangedProperties()) > 0) {
+            if (count($this->display->getChangedProperties(true)) > 0) {
                 $this->display->save(Display::$saveOptionsMinimum);
             }
         } catch (GeneralException $xiboException) {
