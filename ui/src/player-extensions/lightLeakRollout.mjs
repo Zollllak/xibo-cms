@@ -2,7 +2,7 @@
  * Media caches, IndexedDB, localStorage and player identity are preserved.
  */
 export function installLightLeakRollout(worker) {
-  const version='light-leak-v1';
+  const version='light-leak-v2';
   const scope=new URL(worker.registration.scope);
   const marker=new URL('__light_leak_rollout__',scope).href;
   const isCurrent=async()=>{
