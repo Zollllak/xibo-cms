@@ -1,6 +1,6 @@
 # Light Leak entre fotos
 
-Código XLF: `lightLeak`; atribuição de entrada no widget Image. Duração inicial 1800 ms, intervalo aceito de 100 a 10000 ms. A foto anterior deve estar na mesma região; no primeiro item ou em troca de layout não há foto anterior para revelar. Sem WebGL, imagem inacessível ou cancelamento, a próxima foto continua normalmente. Players upstream sem esta extensão não são compatíveis com esse código: direcionar layouts com Light Leak ao player macOS correspondente.
+Código XLF: `lightLeak`; atribuição de entrada no widget Image. Duração inicial 1800 ms, intervalo aceito de 100 a 10000 ms. A foto anterior deve estar na mesma região; no primeiro item ou em troca de layout não há foto anterior para revelar. Sem WebGL, imagem inacessível ou cancelamento, a próxima foto continua normalmente. Players upstream sem esta extensão não são compatíveis com esse código: usar o player macOS correspondente ou a PWA com o adaptador abaixo.
 
 ## Extensão para a PWA RendererLite 0.4.9
 
@@ -9,6 +9,14 @@ Código XLF: `lightLeak`; atribuição de entrada no widget Image. Duração ini
 Verificação da primeira etapa em 2026-11-13: `node --test tests/Transitions/*.test.mjs` passou com 14 testes. Smoke com o RendererLite real de `@xiboplayer/renderer@0.4.9`, duas fotos JPEG e WebGL na externa 2: intervalo das fotos 5027 ms, efeito 1808 ms. Primeiro item, perda de contexto, ausência de GPU, cleanup e geometria `<img>` passaram. Artefatos privados no player, fora do Git. A ativação/cache da PWA no servidor e aplicação em massa às fotos ainda estão sendo executadas; este registro não comprova atualização de TVs já abertas.
 
 `lightLeakRollout.mjs` complementa o Service Worker com atualização única do shell e navegação das janelas do player na ativação. Marcador em `xibo-sw-version` evita loop mesmo com registro usando timestamp. Falta de rede mantém o cliente atual reproduzindo e deixa a tentativa pendente. Somente cache estático/versão é alterado; mídias, IndexedDB e identidade local não são apagados. A atualização depende de o navegador verificar/registrar o novo worker; uma aba antiga pode precisar abrir `atualizar.html` uma vez. Testes de rollout online, repetição sem loop e recuperação offline passaram; suite JS total: 16 testes.
+
+### Publicação da PWA e ativação das fotos
+
+Em 2026-11-13, adaptador `9c2080f` e rollout `71528a5` publicados no volume persistente da PWA. Entry point `assets/light-leak-v1/entry.mjs` importa o export público R (RendererLite) de `main-viewport-v1.js` e instala o adaptador. Bundle upstream e correções anteriores de viewport foram preservados. Worker anterior preservado como core separado; novo wrapper importa o core e o rollout. HTML/worker anteriores têm backup privado. Todos os módulos servidos por HTTPS retornaram 200/text-javascript e foram comparados com as fontes. Nenhuma configuração/cadastro de tela foi apagado. Não há comprovação de atualização de uma TV física já aberta: quando necessário, abrir `/userscripts/player/atualizar.html` nessa tela.
+
+A pedido do usuário, 98 widgets Image receberam duração explícita de 5 s, transIn=lightLeak, transInDuration=1800 e transOut vazio: 49 fotos no layout em uso e 49 no draft. Entidades/factories nativas utilizadas; não foram publicadas outras alterações do draft. Snapshot e backup MySQL anteriores validados (1407779 bytes, gzip íntegro, permissão 0600). Outros widgets/options comparados antes/depois e preservados. Padrão do módulo Image ajustado de 10 para 5 s para novas imagens; não foi habilitado default global de transição para vídeos/HTML.
+
+XLF do layout em uso reconstruído pelo CMS e conferido no disco: 49 de 49 fotos com duração 5, useDuration=1 e Light Leak/1800; ciclo 245 s, MD5 `9f67ac6d12ee300b01452f7f0e76b9bb`. Draft conserva parentId e estado de draft, com widgets corrigidos e rebuild pendente no ciclo normal. Notificações de coleta enviadas pelo serviço nativo. Login HTTPS continuou retornando 200. Evidências privadas e rollback registrados no servidor; não restaurar um dump antigo sem avaliar mudanças posteriores de usuários.
 
 A migração `20261113120000` inclui **Light Leak (Photos)** no catálogo habilitado para entrada. Após executar as migrações e reconstruir os assets do CMS, abrir a playlist/região com duas fotos, editar a transição **in** da segunda foto, selecionar Light Leak e salvar 1800 ms. A opção aparece também em Administração → Transições. A API valida o tipo de widget, entrada e limites; `Layout::toXlf()` exporta `transIn` e `transInDuration` pelo caminho existente.
 
