@@ -60,4 +60,37 @@ class LightLeakWidgetControllerTest extends TestCase
             $this->assertSame($duration ?? 1800, $widget->getOptionValue('transInDuration', null));
         }
     }
+
+    public function testFormOffersLightLeakOnlyForPhotos(): void
+    {
+        foreach (['image', 'video'] as $type) {
+            $widget = $this->getMockBuilder(Widget::class)->disableOriginalConstructor()->getMock();
+            $widget->type = $type;
+            $widgets = $this->createMock(WidgetFactory::class);
+            $widgets->method('loadByWidgetId')->willReturn($widget);
+            $modules = $this->createMock(\Xibo\Factory\ModuleFactory::class);
+            $modules->method('getByType')->willReturn($this->createMock(\Xibo\Entity\Module::class));
+            $transitions = $this->createMock(\Xibo\Factory\TransitionFactory::class);
+            $transitions->method('getEnabledByType')->willReturnCallback(fn ($direction) => $direction === 'in'
+                ? [(object) ['code' => 'fadeIn'], (object) ['code' => 'lightLeak']] : [(object) ['code' => 'fadeOut']]);
+            $user = $this->getMockBuilder(User::class)->disableOriginalConstructor()->onlyMethods(['checkEditable'])->getMock();
+            $user->method('checkEditable')->willReturn(true);
+            $state = new ApplicationState();
+            $controller = $this->getMockBuilder(WidgetController::class)->disableOriginalConstructor()
+                ->onlyMethods(['getUser', 'getState', 'render'])->getMock();
+            $controller->method('getUser')->willReturn($user);
+            $controller->method('getState')->willReturn($state);
+            foreach (['widgetFactory' => $widgets, 'moduleFactory' => $modules, 'transitionFactory' => $transitions] as $name => $value) {
+                (new \ReflectionProperty(WidgetController::class, $name))->setValue($controller, $value);
+            }
+            $request = $this->getMockBuilder(ServerRequest::class)->disableOriginalConstructor()->getMock();
+            $response = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
+            $controller->method('render')->willReturn($response);
+            $controller->editWidgetTransitionForm($request, $response, 'in', 22);
+            $codes = array_column($state->getData()['transitions']['in'], 'code');
+            $this->assertSame($type === 'image' ? ['fadeIn', 'lightLeak'] : ['fadeIn'], $codes);
+            $this->assertSame('module-form-transition', $state->template);
+        }
+    }
+
 }
