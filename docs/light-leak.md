@@ -12,7 +12,9 @@ A prévia usa o mesmo módulo `ui/src/transitions/lightLeak.mjs` do player (`src
 - `node --test tests/Transitions/*.test.mjs`: 7 testes passaram.
 - `npm run build`: Webpack passou; 13 avisos de Sass/deprecações existentes, sem erro.
 - Player etapa inicial: commit `1583fdc`; 7 testes e build passaram.
-- Ainda pendentes nesta etapa: smoke de reprodução WebGL com XLR real, exportação XLF exercitada e teste integrado no servidor. Migração SQLite não equivale a implantação no CMS.
+- Testes adicionais do contrato: `LightLeakWidgetControllerTest` usa o controlador/API e o sanitizador reais, verifica `save` e as opções do widget com duração omitida (1800 ms) e customizada. `LightLeakXlfTest` usa o exportador real `Layout::toXlf()` e opções reais do widget, isolando leitura de banco/validação de mídia: exporta 1800/2300 ms e mantém 60 s por foto / 120 s no layout. Suite completa: **66 testes / 146 assertions**, passou.
+- Smoke externo com o XLR instalado do CMS (1.0.26), plataforma CMS e rotas locais de recurso: passou no display externo 2, duração 1833 ms. Casos: primeiro item sem foto anterior, opções XLF, duas fotos, WebGL real, perda de contexto, sem GPU, reset e remoção da região. Runner no player: `XIBO_LIGHT_LEAK_CMS_CHECKOUT=/caminho/xibo-cms electron scripts/smoke-light-leak.cjs`. Assets reais do CMS compilados com Webpack; smoke exercita as fontes do bundle com a dependência fixada do CMS, sem autenticação nem servidor instalado.
+- Ainda pendente: implantação e atribuição em um CMS real. Migração SQLite e prévia local não equivalem a implantação no servidor.
 
 ## Instalação e rollback
 
