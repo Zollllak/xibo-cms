@@ -41,3 +41,9 @@ A prévia usa o mesmo módulo `ui/src/transitions/lightLeak.mjs` do player (`src
 ## Instalação e rollback
 
 Executar a migração com o procedimento normal do CMS e compilar os assets (`npm ci`, `npm run build` ou seu build de produção). Na instância autorizada a implantação foi efetuada com backup e imagem de rollback. O rollback da migração remove o código do catálogo e as opções transIn/transOut que o referenciam, preservando outras transições; regenerar/publicar os layouts afetados para substituir XLF já distribuídos. Guardar backup antes de aplicar migrações em produção e não restaurar um dump antigo sem avaliar alterações posteriores de usuários.
+
+### Diagnóstico da tela física
+
+`diagnostico.template.html` instala `diagnostico.html` ao lado da PWA; `diagnostics.mjs` e `diagnosticSafety.mjs` ficam em `assets/light-leak-v2/player-extensions/`. A página executa o HTML atual num iframe com listeners de erro anteriores ao entry, mostra contagens de imagens/regiões/cache e envia um único log `PWA-DIAG` pelo SubmitLog autenticado do CMS da mesma origem. Não registra display, altera configuração, limpa cache ou solicita uma nova chave. Credenciais atuais/legadas e valores sensíveis de URLs são ocultados antes de exibir/enviar. O usuário precisa abrir a página no aparelho afetado; o teste num perfil diferente não comprova a tela da loja.
+
+Verificação: 19 testes JS passaram (incluindo ocultação de credenciais e escape de XML). Smoke interativo foi tentado e recusou abrir por falta de externa conectada; não foi executado na Retina. Ainda depende do resultado do diagnóstico no Malhas. A página é uma ferramenta de investigação, não uma correção declarada da tela preta.
