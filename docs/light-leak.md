@@ -2,6 +2,12 @@
 
 Código XLF: `lightLeak`; atribuição de entrada no widget Image. Duração inicial 1800 ms, intervalo aceito de 100 a 10000 ms. A foto anterior deve estar na mesma região; no primeiro item ou em troca de layout não há foto anterior para revelar. Sem WebGL, imagem inacessível ou cancelamento, a próxima foto continua normalmente. Players upstream sem esta extensão não são compatíveis com esse código: direcionar layouts com Light Leak ao player macOS correspondente.
 
+## Extensão para a PWA RendererLite 0.4.9
+
+`ui/src/player-extensions/lightLeakPwa.mjs` instala o efeito no ciclo `_showWidget`/`_hideWidget` do RendererLite. Reutiliza o compositor `ui/src/transitions/lightLeak.mjs`, agora compatível também com `<img>`/object-fit/object-position, sem editar bundles minificados do upstream. O caminho nativo sem animação torna a imagem visível antes de compor; isso também corrige o caso de uma transição desconhecida deixar a imagem em opacity=0. Eventos e timers continuam nativos.
+
+Verificação da primeira etapa em 2026-11-13: `node --test tests/Transitions/*.test.mjs` passou com 14 testes. Smoke com o RendererLite real de `@xiboplayer/renderer@0.4.9`, duas fotos JPEG e WebGL na externa 2: intervalo das fotos 5027 ms, efeito 1808 ms. Primeiro item, perda de contexto, ausência de GPU, cleanup e geometria `<img>` passaram. Artefatos privados no player, fora do Git. A ativação/cache da PWA no servidor e aplicação em massa às fotos ainda estão sendo executadas; este registro não comprova atualização de TVs já abertas.
+
 A migração `20261113120000` inclui **Light Leak (Photos)** no catálogo habilitado para entrada. Após executar as migrações e reconstruir os assets do CMS, abrir a playlist/região com duas fotos, editar a transição **in** da segunda foto, selecionar Light Leak e salvar 1800 ms. A opção aparece também em Administração → Transições. A API valida o tipo de widget, entrada e limites; `Layout::toXlf()` exporta `transIn` e `transInDuration` pelo caminho existente.
 
 A prévia usa o mesmo módulo `ui/src/transitions/lightLeak.mjs` do player (`src/renderer/src/transitions/lightLeak.mjs`), instalado pelos exports públicos Region/Media do XLR. Manter essas fontes idênticas ao atualizar. Não editar node_modules. Nenhuma licença upstream foi removida. Timers, troca de mídia, eventos e prova de reprodução continuam sob responsabilidade do XLR.

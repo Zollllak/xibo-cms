@@ -85,8 +85,12 @@ function snapshot(image, media, width, height, dimensions, style) {
   ctx.scale(width / dimensions.width, height / dimensions.height);
   ctx.fillStyle = style.backgroundColor;
   ctx.fillRect(0, 0, dimensions.width, dimensions.height);
+  // XLR paints CSS backgrounds; RendererLite (PWA) uses native <img> elements.
+  const nativeImage = media.html?.tagName === 'IMG';
+  const size = nativeImage ? (style.objectFit === 'fill' ? '100% 100%' : style.objectFit) : style.backgroundSize;
+  const position = nativeImage ? style.objectPosition : style.backgroundPosition;
   const box = imageRect(image.naturalWidth, image.naturalHeight,
-    media.divWidth, media.divHeight, style.backgroundSize, style.backgroundPosition);
+    media.divWidth, media.divHeight, size, position);
   ctx.drawImage(image, box.x, box.y, box.width, box.height);
   return canvas;
 }
